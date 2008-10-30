@@ -8,12 +8,6 @@ ADMINS = (
      ('Sam Morrison', 'sam@vpac.org'),
 )
 
-MANAGERS = ADMINS
-
-PROJECT_DIR = os_path.abspath(os_path.split(__file__)[0])
-BASE_URL = ''
-
-
 # A list of all PBS servers to list on the server list page
 # also used when finding all jobs for a specific user.
 LOCAL_PBS_SERVERS = ['brecca-m.vpac.org', 
@@ -34,6 +28,14 @@ TIME_ZONE = 'Australia/Melbourne'
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
 LANGUAGE_CODE = 'en-au'
+
+
+MANAGERS = ADMINS
+
+PROJECT_DIR = os_path.abspath(os_path.split(__file__)[0])
+BASE_URL = ''
+
+
 
 SITE_ID = 1
 
@@ -88,5 +90,4 @@ INSTALLED_APPS = (
     'django_pbs.servers',
     'django_pbs.moab',
     'django_pbs',
-    'django_common',
 )
