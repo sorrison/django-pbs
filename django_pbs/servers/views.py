@@ -26,8 +26,8 @@ from django_pbs import serializers
 
 def server_list(request, xml=False):
 
-    if len(LOCAL_PBS_SERVERS) == 1:
-        return HttpResponseRedirect(reverse('pbs_server_detail', LOCAL_PBS_SERVERS[0]))
+    if len(settings.LOCAL_PBS_SERVERS) == 1:
+        return HttpResponseRedirect(reverse('pbs_server_detail', settings.LOCAL_PBS_SERVERS[0]))
 
 
     server_list = settings.LOCAL_PBS_SERVERS
