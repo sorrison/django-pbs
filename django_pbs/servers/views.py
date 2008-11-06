@@ -17,15 +17,21 @@
 
 from django.shortcuts import render_to_response
 from django.template import RequestContext
-from django.http import HttpResponse, HttpResponseForbidden, Http404
+from django.http import HttpResponse, HttpResponseForbidden, HttpResponseRedirect, Http404
 from django.conf import settings
+from django.core.urlresolvers import reverse
 from django_pbs.servers.models import Server, Queue
 from django_pbs import serializers
 
 
 def server_list(request, xml=False):
-    
+
+    if len(LOCAL_PBS_SERVERS) == 1:
+        return HttpResponseRedirect(reverse('pbs_server_detail', LOCAL_PBS_SERVERS[0]))
+
+
     server_list = settings.LOCAL_PBS_SERVERS
+
 
     return render_to_response('pbs_servers/server_list.html', locals(), context_instance=RequestContext(request))
 
