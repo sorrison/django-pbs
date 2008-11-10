@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 # Copyright 2008 VPAC
 #
 # This file is part of django-pbs.
@@ -15,7 +17,6 @@
 # You should have received a copy of the GNU General Public License
 # along with django-pbs  If not, see <http://www.gnu.org/licenses/>.
 
-#!/usr/bin/env python
 from django.core.management import execute_manager
 try:
     import settings # Assumed to be in the same directory.
