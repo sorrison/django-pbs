@@ -117,7 +117,7 @@ class Queue:
         if data:
             seata = data
         else:
-            data = self.server.p.getqueue(self.name)[self.name]
+            data = self.server.p.getqueue(self.name)
 
         self.state_count = data['state_count']
         self.total_jobs = data['total_jobs']

@@ -60,10 +60,7 @@ class Job(object):
         if data:
             data = data
         else:
-#            try:
-            data = self.server.getjob(self.full_id).items()[0][1]
-#            except:
-#                return
+            data = self.server.getjob(self.full_id)
 
         self.name = data['Job_Name']
         self.owner = data['Job_Owner']
