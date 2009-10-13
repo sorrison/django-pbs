@@ -57,9 +57,8 @@ class Job(object):
             self.full_id = '%s.%s' % (self.id, self.server)
         else:
             self.full_id = full_id
-        if data:
-            data = data
-        else:
+
+        if data is None:
             data = self.server.getjob(self.full_id)
 
         self.name = data['Job_Name']
