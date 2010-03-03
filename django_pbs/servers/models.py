@@ -57,7 +57,7 @@ class Server(object):
         for k, n in node_data.items():
             if n['ntype'] != 'cluster':
                 continue
-            if n['state'] == 'offline' or n['state'] == 'down,offline':
+            if n['state'] == 'offline' or n['state'] == 'down,offline' or n['state'] == 'down,job-exclusive':
                 continue
             total += int(n['np'])
             try:
