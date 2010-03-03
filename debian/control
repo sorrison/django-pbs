@@ -1,0 +1,19 @@
+Source: django-pbs
+Section: python
+Priority: optional
+Maintainer: Sam Morrison
+Build-Depends: debhelper (>=7.0.0), python-support (>= 0.6), cdbs (>= 0.4.49)
+Standards-Version: 3.8.3.0
+
+Package: django-pbs
+Architecture: all
+Homepage: http://trac.vpac.org/django-pbs/
+Depends: ${misc:Depends}, ${python:Depends}, python-django (>= 0.96)
+Description: PBS library for Django.
+ Provides views and templates for displaying information 
+ from a PBS server.
+ .
+ pbs_python is required and also the torque libs.
+ .
+ It will show the list of jobs on a server and also 
+ information about particular jobs.

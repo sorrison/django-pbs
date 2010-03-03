@@ -48,9 +48,9 @@ packages, data_files = [], []
 root_dir = os.path.dirname(__file__)
 if root_dir != '':
     os.chdir(root_dir)
-django_pbs_dir = 'django_pbs'
+djpbs_dir = 'django_pbs'
 
-for dirpath, dirnames, filenames in os.walk(django_pbs_dir):
+for dirpath, dirnames, filenames in os.walk(djpbs_dir):
     # Ignore dirnames that start with '.'
     for i, dirname in enumerate(dirnames):
         if dirname.startswith('.'): del dirnames[i]
@@ -65,20 +65,18 @@ if len(sys.argv) > 1 and sys.argv[1] == 'bdist_wininst':
     for file_info in data_files:
         file_info[0] = '\\PURELIB\\%s' % file_info[0]
 
-# Dynamically calculate the version based on django.VERSION.
-version_tuple = __import__('django_pbs').VERSION
-if version_tuple[2] is not None:
-    version = "%d.%d_%s" % version_tuple
-else:
-    version = "%d.%d" % version_tuple[:2]
+# Dynamically calculate the version based on django_pbs.VERSION.
+version = __import__('django_pbs').get_version()
+#if u'dev' in version:
+#    version = ' '.join(version.split(' ')[:-1])
 
 setup(
-    name = "Django PBS",
+    name = "django-pbs",
     version = version,
-    url = 'https://trac.vpac.org/django-pbs',
+    url = 'http://trac.vpac.org/django-pbs/',
     author = 'Sam Morrison',
     author_email = 'sam@vpac.org',
-    description = 'Django PBS wrapper',
+    description = 'PBS Library for Django',
     packages = packages,
     cmdclass = cmdclasses,
     data_files = data_files,
