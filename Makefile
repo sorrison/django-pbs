@@ -1,6 +1,6 @@
 PYTHON=`which python`
 DESTDIR=/
-BUILDIR=$(CURDIR)/build/debian/django-andsome
+BUILDIR=$(CURDIR)/build/debian/django-pbs
 PROJECT=django-pbs
 VERSION=$(python -c "from django_pbs import get_version; print get_version()")
 
