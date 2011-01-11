@@ -1,3 +1,9 @@
+django-pbs (1.1.2-1) testing; urgency=low
+
+  * Change debian format etc.
+
+ -- Sam Morrison <sam@vpac.org>  Tue, 11 Jan 2011 12:36:14 +1100
+
 django-pbs (1.1.1) testing; urgency=low
 
   * Initial release. Made into Deb package
