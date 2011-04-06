@@ -8,7 +8,7 @@ Standards-Version: 3.8.3.0
 Package: django-pbs
 Architecture: all
 Homepage: http://trac.vpac.org/django-pbs/
-Depends: ${misc:Depends}, ${python:Depends}, python-django (>= 0.96)
+Depends: ${misc:Depends}, ${python:Depends}, python-django (>= 0.96), pbs-python
 Description: PBS library for Django
  Provides views and templates for displaying information 
  from a PBS server.
