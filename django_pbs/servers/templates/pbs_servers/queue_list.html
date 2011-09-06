@@ -30,8 +30,8 @@
 	   	<tr class="{% cycle row1,row2 %}">
 	   		<td><a href="{% url pbs_queue_detail server.name,q.name %}">{{ q }}</a></td>
 	   		<td>{{ q.total_jobs }}</td>
-	   		<td>{{ q.default_walltime }}</td>
-	   		<td>{{ q.max_walltime }}</td>
+	   		<td>{{ q.resources_default_walltime }}</td>
+	   		<td>{{ q.resources_max_walltime }}</td>
 	   	</tr>
 	   {% endfor %}
    	</tbody>  	

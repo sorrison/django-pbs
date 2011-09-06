@@ -27,7 +27,11 @@ class Server(object):
         self.name = info[0]
         self.p = p
         for k,v in info[1].items():
-            setattr(self, k.replace('.', '_'), v)
+            if k.startswith('resources'):
+                for i,j in v.items():
+                    setattr(self, k + '_' + i, j[0])
+            else:
+                setattr(self, k, v[0]) 
 
     def __str__(self):
         return self.name
@@ -55,16 +59,15 @@ class Server(object):
         total = 0
         used = 0
         for k, n in node_data.items():
-            if n['ntype'] != 'cluster':
+            if 'cluster' not in n['ntype']:
                 continue
-            if n['state'] == 'offline' or n['state'] == 'down,offline' or n['state'] == 'down,job-exclusive':
+            if 'offline' in n['state'] or 'down' in n['state']:
                 continue
-            total += int(n['np'])
+            total += int(n['np'][0])
             try:
-                used += len(n['jobs'].split(','))
+                used += len(n['jobs'])
             except:
                 pass
-
         return used,total
         
 
@@ -74,7 +77,7 @@ class Server(object):
         for d in data_list:
             id, host = d.split('.', 1)
             if usernames:
-                owner, host = data_list[d]['Job_Owner'].split('@')
+                owner, host = data_list[d]['Job_Owner'][0].split('@')
                 if owner in usernames:
                     job_list.append(Job(server=self, id=id, data=data_list[d]))
             else:
@@ -85,6 +88,7 @@ class Server(object):
         data = self.getnodes()
         nodes = []
         for k,v in data.items():
+            v = dict(v)
             nodes.append(Node(self, k, v))
         return nodes
                          
@@ -92,19 +96,8 @@ class Server(object):
         data = self.getqueues()
         queues = []
         for k,v in data.items():
-            queues.append(Queue(self, k, v))
+            queues.append(Queue(self, k, dict(v)))
         return queues
-                       
-
-    #def queue_list(self):
-
-    #    data_list = self.getqueues()
-    #    queue_list = []
-    #    for d in data_list:
-    #        queue_list.append(Queue(server=self, name=d, data=data_list[d]))
-
-    #    return queue_list
-
 
 
 class Queue:
@@ -113,22 +106,16 @@ class Queue:
 
         self.server = server
         self.name = str(name)
-
-        if data:
-            seata = data
-        else:
+        
+        if not data:
             data = self.server.p.getqueue(self.name)
-
-        self.state_count = data['state_count']
-        self.total_jobs = data['total_jobs']
-#        self.mtime = data['mtime']
-        self.max_walltime = data.get('resources_max.walltime', None)
-        self.default_walltime = data.get('resources_default.walltime', None)
-        self.type = data['queue_type']
-        self.priority = data.get('Priority', None)
-        self.enabled = data['enabled']
-        self.nodes = data.get('resources_assigned.nodect', None)
-        self.started = data['started']
+            
+        for k,v in data.items():
+            if k.startswith('resources'):
+                for i,j in v.items():
+                    setattr(self, k + '_' + i, j[0])
+            else:
+                setattr(self, k, v[0])
 
     def __str__(self):
         return self.name
@@ -148,26 +135,28 @@ class Node:
         self.server = server
         self.name = str(name)
 
-        if data:
-            data = data
-        else:
-            data = self.server.p.getnode(self.name)[self.name]
-
-        self.type = data['ntype']
-        self.np = int(data['np'])
+        if not data:
+            data = self.server.p.getnode(self.name)
+        
+        self.type = data['ntype'][0]
+        self.np = int(data['np'][0])
 
         if 'jobs' in data:
-            self.np_used = len(data['jobs'].split(','))
+            self.np_used = len(data['jobs'])
         else:
             self.np_used = 0
 
-        if data['state'] == 'free' and 'jobs' in data:
+        if 'free' in data['state'] and 'jobs' in data:
             self.state = 'partial'
         else:
-            self.state = data['state']
+            self.state = data['state'][0]
         self.jobs = data.get('jobs', None)
-        self.job_list = self.get_job_list()
-
+        try:
+            self.note = data['note'][0]
+        except KeyError:
+            self.note = ''
+        #self.job_list = self.get_job_list()
+        
     def __str__(self):
         return self.name
 
@@ -180,21 +169,16 @@ class Node:
         return False
 
     def is_online(self):
-        state = self.state
-        if len(state.split(',')) > 1 or state == 'down' or state == 'offline':
+        if state == 'down' or state == 'offline':
             return False
         return True
     
     def get_job_list(self):
+        job_list = []
 
-        job_list = RelationList()
-
-        try:
-            jobs = self.jobs.split(',')
-        except:
-            jobs = []
-
-        for j in jobs:
+        if not self.jobs:
+            return job_list
+        for j in self.jobs:
 
             full_id = j[j.index('/')+1:]
             id, host = full_id.split('.', 1)
@@ -207,9 +191,5 @@ class Node:
         return '/servers/%s/nodes/%s/' % (self.server, self.name)
         
 
-
-class RelationList(list):
-    
-    pass
 
         

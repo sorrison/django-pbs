@@ -29,12 +29,8 @@ def server_list(request, xml=False):
     if len(settings.LOCAL_PBS_SERVERS) == 1:
         return HttpResponseRedirect(reverse('pbs_server_detail', args=[settings.LOCAL_PBS_SERVERS[0]]))
 
-
     server_list = settings.LOCAL_PBS_SERVERS
-
-
     return render_to_response('pbs_servers/server_list.html', locals(), context_instance=RequestContext(request))
-
 
 
 def server_detail(request, server_id, xml=False):
@@ -43,7 +39,7 @@ def server_detail(request, server_id, xml=False):
         raise Http404
 
     server = Server(server_id)
-
+    
     c_used, c_total = server.cpu_stats()
     c_percent = (float(c_used)/float(c_total))*100.00
 
@@ -54,33 +50,22 @@ def server_detail(request, server_id, xml=False):
 
 
 def queue_list(request, server_id, xml=False):
-
     server = Server(server_id)
-
     if xml:
         return HttpResponse(serializers.serialize('xml', server.queue_list(), indent=True), mimetype='text/xml')
-
     return render_to_response('pbs_servers/queue_list.html', locals(), context_instance=RequestContext(request))
 
+    
 def queue_detail(request, server_id, queue_id, xml=False):
-    
     server = Server(server_id)
-    
     queue = Queue(server, queue_id)
-
     if xml:
         return HttpResponse(serializers.serialize('xml', [queue], indent=True), mimetype='text/xml')
-
-
     return render_to_response('pbs_servers/queue_detail.html', locals(), context_instance=RequestContext(request))
 
 
 def node_list(request, server_id, xml=False):
-
     server = Server(server_id)
-
     if xml:
         return HttpResponse(serializers.serialize('xml', server.node_list, indent=True), mimetype='text/xml')
-
-
     return render_to_response('pbs_servers/node_list.html', locals(), context_instance=RequestContext(request))

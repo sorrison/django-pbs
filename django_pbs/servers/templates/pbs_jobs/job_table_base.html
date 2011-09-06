@@ -27,7 +27,7 @@
    	{% for j in job_list %} 	
 	   	<tr class="{% cycle row1,row2 %}">
 	   		<td><a href="{% url pbs_job_detail j.full_id %}">{{ j.id }}</a></td>
-	   		<td>{{ j.name }}</td>
+	   		<td>{{ j.Job_Name }}</td>
 	   		<td><a href="{% url pbs_user_detail j.username %}">{{ j.username }}</a></td>
 	   		<td>{{ j.submission_host }}</td>
 	   		<td><a href="{% url pbs_queue_detail j.server.name,j.queue %}">{{ j.queue }}</a></td>

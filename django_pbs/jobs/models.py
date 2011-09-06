@@ -18,7 +18,6 @@
 from django.db import models
 import datetime
 from decimal import Decimal
-# Create your models here.
 
 
 def get_in_seconds(time):
@@ -30,6 +29,7 @@ def get_in_seconds(time):
     
     returns the time in seconds
     """
+
     if time is None:
         return 0
 
@@ -61,10 +61,15 @@ class Job(object):
         if data is None:
             data = self.server.getjob(self.full_id)
 
-        self.name = data['Job_Name']
-        self.owner = data['Job_Owner']
-        self.username = self.owner.split('@')[0]
-        s = data['job_state']
+        for k,v in data.items():
+            if k.startswith('Resource') or k.startswith('resources') or k.startswith('Walltime'):
+                for i,j in v.items():
+                    setattr(self, k + '_' + i, j[0])
+            else:
+                setattr(self, k, v[0]) 
+
+        self.server = server
+        self.username = self.Job_Owner.split('@')[0]
 
         state_map = {
             'R': 'Running',
@@ -74,35 +79,38 @@ class Job(object):
             'B': 'Blocked',
             }
         try:
-            self.state = state_map[s]
+            self.state = state_map[self.job_state]
         except:
-            self.state = s
+            self.state = self.job_state
 
-        self.est_walltime = data['Resource_List.walltime']
-        self.mem_used = data.get('resources_used.mem', None)
-        self.vmem_used = data.get('resources_used.vmem', None)
-        self.exec_host = data.get('exec_host', None)
-        self.queue = data['queue']
-        self.count = data.get('Resource_List.nodes', None)
-        self.mtime = datetime.datetime.fromtimestamp(int(data['mtime']))
-        self.qtime = datetime.datetime.fromtimestamp(int(data['qtime']))
-        self.ctime = datetime.datetime.fromtimestamp(int(data['ctime']))
-        self.cpus_used = data.get('Resource_List.nodect', None)
-        self.error_path = data['Error_Path']
-        self.output_path = data['Output_Path']
+        self.est_walltime = self.Resource_List_walltime
         try:
-            self.etime = datetime.datetime.fromtimestamp(int(data['etime']))
+            self.count = self.Resource_List_nodes
+        except:
+            pass
+        self.mtime = datetime.datetime.fromtimestamp(int(self.mtime))
+        self.qtime = datetime.datetime.fromtimestamp(int(self.qtime))
+        self.ctime = datetime.datetime.fromtimestamp(int(self.ctime))
+        try:
+            self.cpus_used = self.Resource_List_nodect
+        except:
+            pass
+
+        try:
+            self.etime = datetime.datetime.fromtimestamp(int(self.etime))
         except:
             self.etime = None
-        self.cputime = data.get('resources_used.cput', None)
-        self.act_walltime = data.get('resources_used.walltime', None)
+
         self.walltime = get_in_seconds(self.est_walltime)
-        self.running_time = get_in_seconds(self.act_walltime)
         try:
-            self.submission_host = self.output_path.split(':')[0]
+            self.act_walltime = self.resources_used_walltime
+            self.running_time = get_in_seconds(self.act_walltime)
+        except:
+            pass
+        try:
+            self.submission_host = self.Output_Path.split(':')[0]
         except:
             self.submission_host = None
-        
 
     def __str__(self):
         return self.full_id
@@ -127,11 +135,8 @@ class Job(object):
 
 
     def remaining(self):
-        sec = get_in_seconds(self.est_walltime  ) - get_in_seconds(self.act_walltime  )
-        if sec > 0:
-            return int(sec)
-        else:
-            return ''
+        return int(self.Walltime_Remaining)
+        
 
     def start(self):
         if self.state == 'Running':
